@@ -1,3 +1,8 @@
+{-# START_FILE stack.yaml #-}
+resolver: lts-14.27
+packages:
+- .
+
 {-# START_FILE package.yaml #-}
 name:                {{name}}
 version:             0.1.0.0
@@ -31,6 +36,7 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -43,6 +49,7 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
+    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
