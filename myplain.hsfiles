@@ -75,6 +75,7 @@ module Fibonacci
     , fib4
     ) where
 
+fib1 :: Integral a => a -> a
 fib1 n
   | n == 0    = 0
   | n == 1    = 1
@@ -82,26 +83,29 @@ fib1 n
   | otherwise = -1
 
 -- | fibs is strict in fs
+fib2 :: Integral a => a -> a
 fib2 n = head (fibs n)
   where
-    fibs n
-      | n == 0 = [0]
-      | n == 1 = [1,0]
-      | n > 0  = let !fs = fibs (n-1)
+    fibs a
+      | a == 0 = [0]
+      | a == 1 = [1,0]
+      | a > 0  = let !fs = fibs (a-1)
                  in  (fs!!0 + fs!!1) : fs
       | otherwise = [-1]
 
 -- | fibs is lazy in fs
+fib3 :: Integral a => a -> a
 fib3 n = head (fibs n)
   where
-    fibs n
-      | n == 0 = [0]
-      | n == 1 = [1,0]
-      | n > 0  = let fs = fibs (n-1)
+    fibs a
+      | a == 0 = [0]
+      | a == 1 = [1,0]
+      | a > 0  = let fs = fibs (a-1)
                  in  (fs!!0 + fs!!1) : fs
       | otherwise = [-1]
 
 -- | fib4 is analytic
+fib4 :: Integral a => a -> a
 fib4 n
   | n >= 0 = truncate $ (phi ^ n) / sqrt 5 + 1 / 2
   | otherwise = -1
@@ -109,48 +113,63 @@ fib4 n
     phi = (1 + sqrt 5) / 2
 
 {-# START_FILE test/FibonacciSpec.hs #-}
+{-# LANGUAGE TypeApplications #-}
+
 module FibonacciSpec (spec) where
 
 import Test.Hspec
-import Fibonacci
 import Test.Hspec.QuickCheck (prop)
 import Test.QuickCheck
+
+import Fibonacci
 
 spec :: Spec
 spec = do
     describe "fib1" $ do
         it "fib1 25" $ do
-            fib1 25 `shouldBe` 75025
+            fib1 @Integer 25 `shouldBe` 75025
     describe "fib2" $ do
         it "fib2 50" $ do
-            fib2 50 `shouldBe` 12586269025
+            fib2 @Integer 50 `shouldBe` 12586269025
     describe "fib3" $ do
         it "fib3 50" $ do
-            fib3 50 `shouldBe` 12586269025
+            fib3 @Integer 50 `shouldBe` 12586269025
     describe "fib4" $ do
         it "fib4 50" $ do
-            fib4 50 `shouldBe` 12586269025
+            fib4 @Integer 50 `shouldBe` 12586269025
     describe "fib2 == fib4" $ do
         prop "fib2 == fib4" prop_fib2_equal_fib4
 
 prop_fib2_equal_fib4 :: Gen Bool
 prop_fib2_equal_fib4 = do
     x <- choose (0, 50) :: Gen Integer
-    return $ fib2 x == fib4 x
+    return $ fib2 @Integer x == fib4 @Integer x
+
 
 {-# START_FILE app/Main.hs #-}
+{-# LANGUAGE TypeApplications #-}
+
 module Main where
 
+import Fibonacci (fib1, fib2, fib3, fib4)
+
 main :: IO ()
-main = undefined
+main = do
+  print $ fib1 @Integer 10
+  print $ fib2 @Integer 10
+  print $ fib3 @Integer 10
+  print $ fib4 @Integer 10
+
 
 {-# START_FILE README.md #-}
 # {{name}}
+
 
 {-# START_FILE ChangeLog.md #-}
 # Changelog for {{name}}
 
 ## Unreleased changes
+
 
 {-# START_FILE LICENSE #-}
 Copyright {{author-name}}{{^author-name}}Author name here{{/author-name}} (c) {{year}}{{^year}}2019{{/year}}
@@ -184,7 +203,15 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 {-# START_FILE .gitignore #-}
 .stack-work/
 {{name}}.cabal
 *~
+
+{-# START_FILE .vimrc.local #-}
+augroup LocalSetting
+    autocmd!
+    autocmd FileType *
+        \ let g:mycompile#runcommand = "stack run"
+augroup END
