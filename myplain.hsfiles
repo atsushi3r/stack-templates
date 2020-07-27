@@ -1,8 +1,3 @@
-{-# START_FILE stack.yaml #-}
-resolver: lts-14.27
-packages:
-- .
-
 {-# START_FILE package.yaml #-}
 name:                {{name}}
 version:             0.1.0.0
@@ -28,6 +23,11 @@ description:         Please see the README on GitHub at <https://github.com/{{gi
 dependencies:
 - base >= 4.7 && < 5
 
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wincomplete-uni-patterns
+
 library:
   source-dirs: src
 
@@ -36,7 +36,6 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
-    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -49,7 +48,6 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
-    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -113,7 +111,6 @@ fib4 n
     phi = (1 + sqrt 5) / 2
 
 {-# START_FILE test/FibonacciSpec.hs #-}
-{-# LANGUAGE TypeApplications #-}
 
 module FibonacciSpec (spec) where
 
@@ -127,27 +124,26 @@ spec :: Spec
 spec = do
     describe "fib1" $ do
         it "fib1 25" $ do
-            fib1 @Integer 25 `shouldBe` 75025
+            fib1 (25 :: Integer) `shouldBe` 75025
     describe "fib2" $ do
         it "fib2 50" $ do
-            fib2 @Integer 50 `shouldBe` 12586269025
+            fib2 (50 :: Integer) `shouldBe` 12586269025
     describe "fib3" $ do
         it "fib3 50" $ do
-            fib3 @Integer 50 `shouldBe` 12586269025
+            fib3 (50 :: Integer) `shouldBe` 12586269025
     describe "fib4" $ do
         it "fib4 50" $ do
-            fib4 @Integer 50 `shouldBe` 12586269025
+            fib4 (50 :: Integer) `shouldBe` 12586269025
     describe "fib2 == fib4" $ do
         prop "fib2 == fib4" prop_fib2_equal_fib4
 
 prop_fib2_equal_fib4 :: Gen Bool
 prop_fib2_equal_fib4 = do
     x <- choose (0, 50) :: Gen Integer
-    return $ fib2 @Integer x == fib4 @Integer x
+    return $ fib2 x == fib4 x
 
 
 {-# START_FILE app/Main.hs #-}
-{-# LANGUAGE TypeApplications #-}
 
 module Main where
 
@@ -155,10 +151,10 @@ import Fibonacci (fib1, fib2, fib3, fib4)
 
 main :: IO ()
 main = do
-  print $ fib1 @Integer 10
-  print $ fib2 @Integer 10
-  print $ fib3 @Integer 10
-  print $ fib4 @Integer 10
+  print $ fib1 (10 :: Integer)
+  print $ fib2 (10 :: Integer)
+  print $ fib3 (10 :: Integer)
+  print $ fib4 (10 :: Integer)
 
 
 {-# START_FILE README.md #-}
