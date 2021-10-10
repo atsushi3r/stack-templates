@@ -112,7 +112,7 @@ fib4 n
 
 {-# START_FILE test/FibonacciSpec.hs #-}
 
-module FibonacciSpec (spec) where
+module FibonacciSpec (testFibonacci, spec) where
 
 import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
@@ -120,42 +120,38 @@ import Test.QuickCheck
 
 import Fibonacci
 
+testFibonacci :: IO ()
+testFibonacci = hspec spec
+
 spec :: Spec
 spec = do
-    describe "fib1" $ do
-        it "fib1 25" $ do
-            fib1 (25 :: Integer) `shouldBe` 75025
-    describe "fib2" $ do
-        it "fib2 50" $ do
-            fib2 (50 :: Integer) `shouldBe` 12586269025
-    describe "fib3" $ do
-        it "fib3 50" $ do
-            fib3 (50 :: Integer) `shouldBe` 12586269025
-    describe "fib4" $ do
-        it "fib4 50" $ do
-            fib4 (50 :: Integer) `shouldBe` 12586269025
-    describe "fib2 == fib4" $ do
+    describe "fib1" $
+        it "fib1 25 == 75025" $
+          fib1 (25 :: Integer) `shouldBe` 75025
+    describe "fib2" $
+      context "with the context" $ do
+        -- some context
+        it "fib2 25 == 75025" $
+          fib2 (25 :: Integer) `shouldBe` 75025
+        it "fib2 50 == 12586269025" $
+          fib2 (50 :: Integer) `shouldBe` 12586269025
+    describe "fib2 and fib4" $
         prop "fib2 == fib4" prop_fib2_equal_fib4
 
-prop_fib2_equal_fib4 :: Gen Bool
+prop_fib2_equal_fib4 :: Gen Expectation
 prop_fib2_equal_fib4 = do
     x <- choose (0, 50) :: Gen Integer
-    return $ fib2 x == fib4 x
+    return $ fib2 x `shouldBe` fib4 x
 
 
 {-# START_FILE app/Main.hs #-}
 
 module Main where
 
-import Fibonacci (fib1, fib2, fib3, fib4)
+-- import Fibonacci (fib1, fib2, fib3, fib4)
 
 main :: IO ()
-main = do
-  print $ fib1 (10 :: Integer)
-  print $ fib2 (10 :: Integer)
-  print $ fib3 (10 :: Integer)
-  print $ fib4 (10 :: Integer)
-
+main = undefined
 
 {-# START_FILE README.md #-}
 # {{name}}
@@ -206,8 +202,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *~
 
 {-# START_FILE .vimrc.local #-}
-augroup LocalSetting
-    autocmd!
-    autocmd FileType *
-        \ let g:mycompile#runcommand = "stack run"
-augroup END
+let b:mycompile#runcommand = "stack run"
