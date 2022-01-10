@@ -202,4 +202,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *~
 
 {-# START_FILE .vimrc.local #-}
-let b:mycompile#runcommand = "stack run"
+let b:mycompile_runcmd = "stack run"
