@@ -42,6 +42,9 @@ executables:
     - -main-is Main
     dependencies:
     - {{name}}
+    when:
+    - condition: false
+      other-modules: Paths_{{name}}
 
 tests:
   {{name}}-test:
@@ -145,7 +148,6 @@ prop_fib2_equal_fib4 = do
 
 
 {-# START_FILE app/Main.hs #-}
-
 module Main where
 
 -- import Fibonacci (fib1, fib2, fib3, fib4)
