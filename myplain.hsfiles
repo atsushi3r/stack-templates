@@ -201,6 +201,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 {-# START_FILE .gitignore #-}
 .stack-work/
 {{name}}.cabal
+*.hie
+*.prof
+*.lock
 *~
 
 {-# START_FILE .vimrc.local #-}
